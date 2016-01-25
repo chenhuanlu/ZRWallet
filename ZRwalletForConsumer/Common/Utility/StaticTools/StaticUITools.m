@@ -1,0 +1,594 @@
+//
+//  StaticUITools.m
+//  Mlife
+//
+//  Created by xuliang on 12-12-27.
+//
+/*----------------------------------------------------------------
+ // Copyright (C) 2002 深圳四方精创资讯股份有限公司
+ // 版权所有。
+ //
+ // 文件名： StaticUITools.m
+ // 文件功能描述：公共方法类
+ 
+ // 创建标识：
+ // 修改标识：
+ // 修改日期：
+ // 修改描述：
+ //
+ ----------------------------------------------------------------*/
+
+
+#import "StaticUITools.h"
+#import <QuartzCore/QuartzCore.h>
+#import "StaticDataTools.h"
+
+
+@implementation StaticTools(StaticUITools)
+
+
+
+/*
+ @abstract 设置导航栏背景颜色
+ */
++ (void)setNavigationBarBackgroundImage:(UINavigationBar *)navigationBar withImg:(NSString*)name
+{
+    
+    [navigationBar setBackgroundImage:[UIImage imageNamed:name] forBarPosition:UIBarPositionTopAttached barMetrics:UIBarMetricsDefault];
+}
+
+/*
+ @abstract 给View添加navigation
+ */
++ (UINavigationController *)pushNavController:(UIViewController *)viewController
+{
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
+//    [self navigationBarSetBackgroundImage:navController.navigationBar];
+    return navController;
+}
+
+/*
+ @abstract 淡入淡出效果
+ */
++ (void) FadeOut:(UIView *)view appear:(BOOL)appear
+		   viewX:(float)viewX
+		   viewY:(float)viewY
+	   viewWidth:(float)viewWidth
+	  viewHeigth:(float)viewHeigth
+{
+    view.alpha = appear?0:1;
+    view.frame = appear?CGRectMake(viewX + viewWidth / 2, viewY+viewHeigth / 2, 0, 0):CGRectMake(viewX, viewY, viewWidth, viewHeigth);
+	[UIView beginAnimations:nil context:nil];
+	[UIView setAnimationDuration:.5];
+	[UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+	[UIView setAnimationRepeatAutoreverses:NO];
+	view.alpha = appear?1:0;
+    view.frame = !appear?CGRectMake(viewX + viewWidth / 2, viewY + viewHeigth / 2, 0, 0):CGRectMake(viewX, viewY, viewWidth, viewHeigth);
+	[UIView commitAnimations];
+}
+
+/*
+ 给图片加边框
+ */
++ (void)addFrame:(UIView *)sender{
+    sender.layer.masksToBounds=YES;
+	sender.layer.cornerRadius=0.8;
+	sender.layer.borderWidth=0.8;
+    sender.layer.borderColor=[[UIColor colorWithRed:217/255.0 green:217/255.0 blue:217/255.0 alpha:1]CGColor];
+}
+
+/*
+ 给图片加圆角
+ */
++ (void)createRoundedRectImage:(UIImageView *)imageView{
+    imageView.layer.masksToBounds = YES;
+	imageView.layer.cornerRadius = 5.0;
+}
+
+/*
+ *返回label的高度
+ */
++ (float)getLabelHeight:(NSString *)textString
+            defautWidth:(float)defautWidth
+           defautHeight:(float)defautHeight
+               fontSize:(int)fontSize
+{
+    CGSize size = CGSizeMake(defautWidth,defautHeight);
+    //计算实际frame大小，并将label的frame变成实际大小
+    CGSize labelsize = [textString sizeWithFont:[UIFont systemFontOfSize:fontSize] constrainedToSize:size lineBreakMode:UILineBreakModeWordWrap];
+    return labelsize.height;
+}
+
+/*
+ *返回label的宽度
+ */
++ (float)getLabelWidth:(NSString *)textString
+           defautWidth:(float)defautWidth
+          defautHeight:(float)defautHeight
+              fontSize:(int)fontSize
+{
+    //textString = [textString stringByReplacingOccurrencesOfString:@"0" withString:@"*"];
+    CGSize size = CGSizeMake(defautWidth,defautHeight);
+    //计算实际frame大小，并将label的frame变成实际大小
+    CGSize labelsize = [textString sizeWithFont:[UIFont systemFontOfSize:fontSize] constrainedToSize:size lineBreakMode:UILineBreakModeWordWrap];
+    return labelsize.width;
+}
+
+/*
+ *image拼图 由左、中、右三张图片合并成一张图片
+ *返回一个拼好的image
+ */
++ (UIImage *)getImageFromImage:(UIImage *)imageLeftOrTop
+                  centerImage:(UIImage *)imageCenter
+                   finalImage:(UIImage *)imageRightOrBottom
+                     withSize:(CGSize)resultSize
+{
+    //m_zhanggaofeng20130712 解决图片拼接后模糊问题
+//    UIGraphicsBeginImageContext(resultSize);
+    UIGraphicsBeginImageContextWithOptions(resultSize, NO, 0.0);
+    
+    // Draw image1
+    [imageLeftOrTop drawInRect:CGRectMake(0, 0, imageLeftOrTop.size.width, imageLeftOrTop.size.height)];
+    
+    // Draw image2
+    if (resultSize.height == imageLeftOrTop.size.height)
+    {
+        //如果高度相等 则从左到右画图
+        [imageCenter drawInRect:CGRectMake(imageLeftOrTop.size.width, 0, resultSize.width -imageLeftOrTop.size.width - imageRightOrBottom.size.width, imageCenter.size.height)];
+        // Draw image3
+        [imageRightOrBottom drawInRect:CGRectMake(resultSize.width-imageRightOrBottom.size.width, 0, imageRightOrBottom.size.width, imageRightOrBottom.size.height)];
+    }
+    else if(resultSize.width == imageLeftOrTop.size.width)
+    {
+        //宽度相同 则从上到下画图
+        [imageCenter drawInRect:CGRectMake(0, imageLeftOrTop.size.height, imageCenter.size.width, resultSize.height - imageLeftOrTop.size.height-imageRightOrBottom.size.height)];
+        // Draw image3
+        [imageRightOrBottom drawInRect:CGRectMake(0, resultSize.height - imageRightOrBottom.size.height, imageRightOrBottom.size.width, imageRightOrBottom.size.height)];
+    }
+    
+    UIImage *resultingImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return resultingImage;
+//    [resultingImage release];
+}
+
+/**
+ *  image拼图 由上、中、下三张图片合并成一张图片
+ *
+ *  @param upImage    上面的图片
+ *  @param midImage   中间的图片
+ *  @param downImage  底部的图片
+ *  @param resultSize 需要返回的合并后的图片的大小 注意不要小于三张图片加起来的最小size
+ *
+ *  @return
+ */
++ (UIImage*)getImageFromUpImage:(UIImage*)upImage
+                       midImage:(UIImage*)midImage
+                      downImage:(UIImage*)downImage
+                       withSize:(CGSize)resultSize
+{
+    UIGraphicsBeginImageContextWithOptions(resultSize, NO, 0.0);
+    
+    [upImage drawInRect:CGRectMake(0, 0,resultSize.width, upImage.size.height)];
+    [midImage drawInRect:CGRectMake(0, upImage.size.height,resultSize.width, resultSize.height - upImage.size.height-downImage.size.height)];
+    [downImage drawInRect:CGRectMake(0, resultSize.height - downImage.size.height,resultSize.width, downImage.size.height)];
+    UIImage *resultingImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return resultingImage;
+}
+
+/**
+ *  将图片裁剪成圆形
+ *
+ *  @param image 图片
+ *  @param inset
+ *
+ *  @return
+ */
++ (UIImage*) circleImage:(UIImage*) image withParam:(CGFloat) inset
+{
+    UIGraphicsBeginImageContext(image.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetLineWidth(context, 2);
+    CGContextSetStrokeColorWithColor(context, [UIColor lightGrayColor].CGColor);
+    CGRect rect = CGRectMake(inset, inset, image.size.width - inset * 2.0f, image.size.height - inset * 2.0f);
+    CGContextAddEllipseInRect(context, rect);
+    CGContextClip(context);
+    
+    [image drawInRect:rect];
+    CGContextAddEllipseInRect(context, rect);
+    CGContextStrokePath(context);
+    UIImage *newimg = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newimg;
+}
+
+/**
+ *  图片缩放
+ *
+ *  @param image   原始图片
+ *  @param newSize 缩放的大小
+ *
+ *  @return
+ */
++ (UIImage*)imageWithImage:(UIImage*)image scaledToSize:(CGSize)newSize
+{
+	UIGraphicsBeginImageContext(newSize);
+	[image drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+	UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+	
+	return newImage;
+}
+
+/*
+ *屏幕旋转
+ */
++ (CGAffineTransform)transformForOrientation {
+	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+	if (UIInterfaceOrientationLandscapeLeft == orientation) {
+		return CGAffineTransformMakeRotation(M_PI*1.5);
+	} else if (UIInterfaceOrientationLandscapeRight == orientation) {
+		return CGAffineTransformMakeRotation(M_PI/2);
+	} else if (UIInterfaceOrientationPortraitUpsideDown == orientation) {
+		return CGAffineTransformMakeRotation(-M_PI);
+	} else {
+		return CGAffineTransformIdentity;
+	}
+}
+
+
+
+/*
+ *给tableview添headerview
+ */
++ (void)setheaderView:(UITableView *)tableview{
+    
+    UIView *headview=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 10)];
+    [headview setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_list_all.png"]]];
+    UIImageView *lineImage=[[UIImageView alloc] initWithFrame:CGRectMake(0, 9, 320, 1)];
+    [lineImage setBackgroundColor:[StaticTools colorWithHexString:@"#e1e1e1"]];
+    [headview addSubview:lineImage];
+    [tableview setTableHeaderView:headview];
+
+}
+
+/**
+ *  给tableview添加点击加载更多的footview
+ *
+ *  @param tableview
+ *  @param action    点击了加载更多后调用的方法
+ */
++ (void)setTableViewAddMoreFootView:(UITableView*)tableview withAction:(SEL)action
+{
+    UIView *footView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, tableview.frame.size.width, 30)];
+    UIButton *moreBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [moreBtn setFrame:CGRectMake(0, 0, footView.frame.size.width, footView.frame.size.height)];
+    [moreBtn setTitle:@"点击查看更多" forState:UIControlStateNormal];
+    [moreBtn setTitleColor:RGBCOLOR(52, 75, 138) forState:UIControlStateNormal];
+    [moreBtn addTarget:tableview.delegate action:action forControlEvents:UIControlEventTouchUpInside];
+    moreBtn.tag = Action_Tag_AddMore;
+    [footView addSubview:moreBtn];
+    
+    UIActivityIndicatorView *actView = [[UIActivityIndicatorView alloc]initWithFrame:CGRectMake(80, 0, 30, 30)];
+    actView.activityIndicatorViewStyle = UIActivityIndicatorViewStyleGray;
+    actView.tag = View_Tag_MoreActivity;
+    [footView addSubview:actView];
+    actView.hidden = YES;
+
+    tableview.tableFooterView = footView;
+
+}
+
+/*
+ *将tableview 的tablefootview设为正在加载的状态
+ */
++ (void)setTableFootViewIsAdding:(UITableView*)tableView
+{
+    UIActivityIndicatorView *actView = (UIActivityIndicatorView*)[tableView.tableFooterView viewWithTag:View_Tag_MoreActivity];
+    actView.hidden = NO;
+    [actView startAnimating];
+    
+    UIButton *moreBtn = (UIButton*)[tableView.tableFooterView viewWithTag:Action_Tag_AddMore];
+    [moreBtn setTitle:@"正在加载..." forState:UIControlStateNormal];
+}
+
+/*
+ *将tableview 的tablefootview设为加载失败的状态
+ */
++ (void)setTableFootViewIsLoadingFail:(UITableView*)tableView
+{
+    UIActivityIndicatorView *actView = (UIActivityIndicatorView*)[tableView.tableFooterView viewWithTag:View_Tag_MoreActivity];
+    [actView stopAnimating];
+    actView.hidden = YES;
+    
+    
+    UIButton *moreBtn = (UIButton*)[tableView.tableFooterView viewWithTag:Action_Tag_AddMore];
+    [moreBtn setTitle:@"加载失败，点击重试！" forState:UIControlStateNormal];
+}
+
+/*
+ 给view加BadgeValue
+ */
++ (UIView *)showBadgeValue:(NSString *)strBadgeValue
+                 withImage:(UIImage *)backgroundImage
+                    onView:(UIView *)parentView
+{
+    UIImageView *subview=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, backgroundImage.size.width, backgroundImage.size.height)];//M_lxl
+    [subview setImage:backgroundImage];
+    UILabel *badgeLable=[[UILabel alloc] initWithFrame:CGRectMake(0, -1, backgroundImage.size.width, backgroundImage.size.height)];
+    [badgeLable setFont:[UIFont systemFontOfSize:13]];
+    [badgeLable setBackgroundColor:[UIColor clearColor]];
+    badgeLable.textAlignment = UITextAlignmentCenter;
+    [badgeLable setTextColor:[UIColor whiteColor]];
+    if ([strBadgeValue intValue] < 10)
+    {
+        [badgeLable setText:strBadgeValue];
+    }
+    else
+    {
+        [badgeLable setText:@"N"];
+    }
+    [subview addSubview:badgeLable];
+    [parentView addSubview:subview];
+    subview.frame = CGRectMake(parentView.frame.size.width-subview.frame.size.width, 0,
+                               subview.frame.size.width, subview.frame.size.height);
+    
+    return subview;
+}
+
+/*
+ 给view移除badgevalue
+ */
++ (void)removeBadgeValue:(UIView *)view
+{
+    //移除badgevalue
+    for (UIView *subview in view.subviews) {
+        NSString *strClassName = [NSString stringWithUTF8String:object_getClassName(subview)];
+        if ([strClassName isEqualToString:@"UIImageView"] ||
+            [strClassName isEqualToString:@"_UIBadgeView"]) {
+            [subview removeFromSuperview];
+            break;
+        }
+    }
+}
+
+/*
+ tip提示
+ */
++ (void)showFavoriteTip:(NSString *)tip img:(NSString *)img{
+    UIWindow *mainWindow= [[UIApplication sharedApplication] keyWindow];
+    for(UIView *view in mainWindow.subviews)
+    {
+        if ([view isKindOfClass:[UIImageView class]])
+        {
+            [view removeFromSuperview];
+        }
+    }
+    
+    UIImageView *starImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_toast.png"]];
+    [starImageView setFrame:CGRectMake((mainWindow.frame.size.width - 170)/2, (mainWindow.frame.size.height - 60)/2, 170, 60)];
+    
+    UIImageView *iconImageview;
+    if ([img isEqualToString:@""]) {
+        iconImageview=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"icon_toast_right.png"]];
+    }else{
+        iconImageview=[[UIImageView alloc] initWithImage:[UIImage imageNamed:img]];
+    }
+    
+    [iconImageview setFrame:CGRectMake(15, (starImageView.frame.size.height - 30)/2, 30, 30)];
+    [starImageView addSubview:iconImageview];
+    
+    UILabel *lblText = [[UILabel alloc] initWithFrame:CGRectMake(35, (starImageView.frame.size.height-30)/2, starImageView.frame.size.width-40, 30)];
+    lblText.textAlignment = UITextAlignmentCenter;
+    lblText.text = tip;
+    lblText.backgroundColor = [UIColor clearColor];
+    [lblText setTextColor:[UIColor whiteColor]];
+    [lblText setFont:[UIFont systemFontOfSize:15]];
+    [starImageView addSubview:lblText];
+    
+    [mainWindow addSubview:starImageView];
+    
+    //消失的动画
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationDelegate:self];
+    [UIView setAnimationRepeatAutoreverses:NO];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+    [UIView setAnimationDuration:3.0f];
+    [UIView setAnimationDelay:2.0f];
+    
+    starImageView.alpha = 0.0f;
+    
+    [UIView commitAnimations];
+
+}
+
+/**
+ *  给一个view增加点击缩放效果
+ *
+ *  @param view
+ */
++ (void)tapAnimationWithView:(UIView*)view
+{
+    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"transform"];
+	animation.duration = 0.50;
+	animation.delegate = self;
+	animation.removedOnCompletion = YES;
+	animation.fillMode = kCAFillModeForwards;
+	NSMutableArray *values = [NSMutableArray array];
+	[values addObject:[NSValue valueWithCATransform3D:CATransform3DMakeScale(0.8, 0.8, 1.0)]];
+	[values addObject:[NSValue valueWithCATransform3D:CATransform3DMakeScale(1.2, 1.2, 1.0)]];
+	[values addObject:[NSValue valueWithCATransform3D:CATransform3DMakeScale(0.9, 0.9, 0.9)]];
+	[values addObject:[NSValue valueWithCATransform3D:CATransform3DMakeScale(1.0, 1.0, 1.0)]];
+	animation.values = values;
+	[view.layer addAnimation:animation forKey:nil];
+}
+#pragma mark -
+#pragma mark 添加Notification
+/*
+ *注册通知
+ *
+ *@param context
+ *  传入接收消息的上下文，即谁要接收消息，类型为UIViewController
+ *
+ *@param notificationName
+ *  传入通知的名称
+ *
+ *@param notificationFunction
+ *  传入接到通知后要调用的方法名
+ *
+ *@调用举例
+ *   [StaticTools registerNotification:self notificationName:@"updata" notificationFunction:@selector(updata:)];
+ */
++(void)registerNotification:(UIViewController *)context
+           notificationName:(NSString * const)notificationName
+       notificationFunction:(SEL)function
+{
+    if ([context respondsToSelector:function])
+    {
+        [[NSNotificationCenter defaultCenter] addObserver:context selector:function name:notificationName object:nil];
+    }
+}
+
+#pragma mark -
+#pragma mark 发送Notification
+/*
+ *发送通知
+ *
+ *@param notificationName
+ *  传入通知的名称
+ *
+ *@param param
+ *  传入通知需要携带的值，类型为id
+ *
+ *@调用举例
+ *   NSArray* arr = [[NSArray alloc] initWithObjects:@"a",@"b", nil];
+ [StaticTools postNotification:@"updata" param: arr];
+ *
+ *@取出消息中携带值方法
+ *  在接到通知后要调用的方法中  NSArray* arr = (NSArray*)[n object];
+ */
++ (void)postNotification:(NSString *)notificationName param:(id)param{
+    NSNotification *notification = [NSNotification notificationWithName:notificationName object:param];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+}
+
+#pragma mark -
+#pragma mark 删除Notification
+/*
+ *删除接收通知
+ *
+ *@param context
+ *  传入接收消息的上下文，即谁要接收消息，类型为UIViewController
+ *
+ *@param notificationName
+ *  传入通知的名称，若在viewDidLoad 中调用注册通知，则在viewDidUnload中调用删除
+ *
+ *@调用举例
+ *   [StaticTools removeNotification:self notificationName:@"updata"];
+ */
++ (void)removeNotification:(UIViewController *)context  notificationName:(NSString *)notificationName{
+    [[NSNotificationCenter defaultCenter] removeObserver:context name:notificationName object:nil];
+}
+
+
+
+
+#pragma mark - 去掉cell多余的分割线
++ (void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+
+}
+
+/**
+ *  给金额数字加上效果
+ *
+ *  @param text       金额字符串 可以为    xxx:￥1234.00 或￥1133.00    必须有￥符号
+ *  @param frontFont  描述文字字体 没有时可传nil
+ *  @param frontColor 描述文字颜色 没有时可传nil
+ *  @param font       金额字体
+ *  @param color      金额颜色
+ *
+ *  @return
+ */
++ (NSMutableAttributedString*)getMoneyTextAtributionWithText:(NSString*)text
+                                                   frontFont:(UIFont*)frontFont
+                                                  frontColor:(UIColor*)frontColor
+                                                   moneyFont:(UIFont*)font
+                                                  moneyColor:(UIColor*)color
+{
+    NSArray *arr = [text componentsSeparatedByString:@"￥"];
+    if (arr.count==0)
+    {
+        return nil;
+    }
+    
+    NSInteger frontSize; //若￥符号前有描述文字  描述文字的长度
+    if (arr.count==2)
+    {
+        NSString *text = arr[0];
+        frontSize = text.length;
+    }
+    if ([text rangeOfString:@"."].location==NSNotFound) //没有小数点
+    {
+        text = [NSString stringWithFormat:@"%@.00",text];
+    }
+    else if([text rangeOfString:@"."].location==(text.length-2)) //小数点后有一位
+    {
+        text = [NSString stringWithFormat:@"%@0",text];
+    }
+    NSMutableAttributedString *moneyStr = [[NSMutableAttributedString alloc] initWithString:text];
+    if(frontSize!=0)
+    {
+        [moneyStr addAttribute:NSForegroundColorAttributeName value:frontColor range:NSMakeRange(0,frontSize)];
+        [moneyStr addAttribute:NSFontAttributeName value:frontFont range:NSMakeRange(0, frontSize)];
+    }
+    
+    
+    //￥符号
+    [moneyStr addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(frontSize,1)];
+    [moneyStr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:font.pointSize-5] range:NSMakeRange(frontSize, 1)];
+    
+    frontSize = frontSize+1;
+    
+    //金额数字
+    [moneyStr addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(frontSize,text.length-frontSize)];
+    [moneyStr addAttribute:NSFontAttributeName value:font range:NSMakeRange(frontSize, text.length-frontSize-3)];
+    [moneyStr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:font.pointSize-4] range:NSMakeRange(text.length-3, 3)];
+    
+    return moneyStr;
+}
+
+/**
+ *  格式化进入数据 返回有两个小数点的
+ *
+ *  @param money
+ *
+ *  @return
+ */
++ (NSString*)formatMoney:(NSString*)money
+{
+    if ([money rangeOfString:@"."].location==NSNotFound) //没有小数点
+    {
+        money = [NSString stringWithFormat:@"%@.00",money];
+    }
+    else if([money rangeOfString:@"."].location==(money.length-2)) //小数点后有一位
+    {
+        money = [NSString stringWithFormat:@"%@0",money];
+    }
+    else  //小数点后有两位以上
+    {
+        money = [NSString stringWithFormat:@"%.2f",[money floatValue]];
+    }
+    return money;
+}
+
+@end
+

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PaymentViewController">
+            <connections>
+                <outlet property="listTableView" destination="IdV-TL-Yg2" id="FIs-3R-TXc"/>
+                <outlet property="payMoneyLabel" destination="LXT-DI-5qf" id="Ug9-nx-8ja"/>
+                <outlet property="payView" destination="TCn-om-fBZ" id="Ea1-Dq-2Aq"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TCn-om-fBZ">
+                    <rect key="frame" x="0.0" y="523" width="320" height="45"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="实付款 123" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LXT-DI-5qf">
+                            <rect key="frame" x="20" y="14" width="184" height="21"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="21" id="y2f-h3-KGN"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uP7-LD-5OW">
+                            <rect key="frame" x="220" y="0.0" width="100" height="45"/>
+                            <color key="backgroundColor" red="0.80784313725490198" green="0.0" blue="0.12941176470588234" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="100" id="1i8-jg-yXf"/>
+                                <constraint firstAttribute="height" constant="45" id="UqS-b4-Rzy"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                            <state key="normal" title="确认付款">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="buttonClickHandle:" destination="-1" eventType="touchUpInside" id="3rw-LP-WUz"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" red="0.22745098039215686" green="0.22745098039215686" blue="0.22745098039215686" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="LXT-DI-5qf" firstAttribute="top" secondItem="TCn-om-fBZ" secondAttribute="top" constant="14" id="8gh-Mg-TBE"/>
+                        <constraint firstItem="uP7-LD-5OW" firstAttribute="leading" secondItem="LXT-DI-5qf" secondAttribute="trailing" constant="16" id="MVf-VW-GTR"/>
+                        <constraint firstAttribute="height" constant="45" id="aIX-gv-fCo"/>
+                        <constraint firstAttribute="trailing" secondItem="uP7-LD-5OW" secondAttribute="trailing" id="mXY-Tt-hVE"/>
+                        <constraint firstItem="uP7-LD-5OW" firstAttribute="top" secondItem="TCn-om-fBZ" secondAttribute="top" id="mdV-HI-c1E"/>
+                        <constraint firstItem="LXT-DI-5qf" firstAttribute="leading" secondItem="TCn-om-fBZ" secondAttribute="leading" constant="20" id="uWS-uQ-5aB"/>
+                    </constraints>
+                </view>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" translatesAutoresizingMaskIntoConstraints="NO" id="IdV-TL-Yg2">
+                    <rect key="frame" x="0.0" y="64" width="320" height="456"/>
+                    <color key="backgroundColor" red="0.93725490196078431" green="0.93725490196078431" blue="0.95686274509803926" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="UVT-IB-K1Y"/>
+                        <outlet property="delegate" destination="-1" id="xNQ-xa-N7I"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="IdV-TL-Yg2" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="64" id="Cvh-q0-zJI"/>
+                <constraint firstAttribute="bottom" secondItem="TCn-om-fBZ" secondAttribute="bottom" id="GPl-5H-Q8L"/>
+                <constraint firstItem="TCn-om-fBZ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="bec-dM-ISO"/>
+                <constraint firstAttribute="trailing" secondItem="IdV-TL-Yg2" secondAttribute="trailing" id="lck-pQ-MYX"/>
+                <constraint firstItem="IdV-TL-Yg2" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="t3s-wo-YaS"/>
+                <constraint firstItem="TCn-om-fBZ" firstAttribute="top" secondItem="IdV-TL-Yg2" secondAttribute="bottom" constant="3" id="ugj-RO-Nan"/>
+                <constraint firstAttribute="trailing" secondItem="TCn-om-fBZ" secondAttribute="trailing" id="wGk-iH-gvj"/>
+            </constraints>
+            <point key="canvasLocation" x="364" y="156"/>
+        </view>
+    </objects>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4"/>
+    </simulatedMetricsContainer>
+</document>

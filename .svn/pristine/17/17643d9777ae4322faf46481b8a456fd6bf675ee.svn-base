@@ -1,0 +1,73 @@
+//
+//  MoreDetailCell.m
+//  ZRwalletForConsumer
+//
+//  Created by 邵梦 on 15/7/13.
+//  Copyright (c) 2015年 文彬. All rights reserved.
+//
+
+#import "MoreDetailCell.h"
+#import "UIColor+NSString.h"
+
+@implementation MoreDetailCell
+
+- (void)awakeFromNib {
+}
+-(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
+    
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        self.titleLabel = [UILabel new];
+        self.titleLabel.font = [UIFont systemFontOfSize : 16];
+        [self addSubview: self.titleLabel];
+        
+        //正文
+//        self.detailLabel = [UILabel new];
+//        self.detailLabel.text = @"老师的交流费价格将垃圾的恐惧爱劳动纠纷看见对方就看见的解放军阿卡的经济带开了房间安静的疯狂邻居看见啦；将搭建的接口附近的两款机房课教案的空间放空间打开了吉安的空间放空间按到了可简单快捷按键的";
+//        
+//        NSDictionary *fontDic = @{ NSFontAttributeName: [UIFont systemFontOfSize : 13] };
+//        self.detailLabel.numberOfLines = 0;
+//    
+//        self.detailLabel.font = [UIFont systemFontOfSize:13];
+//        self.detailLabel.textColor = [UIColor grayColor];
+//        CGSize detailLabelSize = [self.detailLabel.text
+//                                  boundingRectWithSize : CGSizeMake(SCREEN_WIDTH - 30, MAXFLOAT)
+//                                               options : NSStringDrawingUsesLineFragmentOrigin
+//                                            attributes : fontDic
+//                                               context : nil
+//                                                       ].size;
+//        self.detailLabel.size = detailLabelSize;
+//        [self addSubview:self.detailLabel];
+
+         
+        self.lineView = [UIView new];
+        self.lineView.backgroundColor = [UIColor colorWithString:@"#f0f0f0"];
+        [self addSubview:self.lineView];
+        
+        self.backgroundColor = [UIColor whiteColor];
+        
+    }
+    return self;
+}
+-(void)layoutSubviews{
+    [super layoutSubviews];
+   
+    self.titleLabel.size = CGSizeMake(SCREEN_WIDTH/2, 12);
+    self.titleLabel.viewTop = 10;
+    self.titleLabel.viewLeft = 15;
+    
+//    self.detailLabel.viewTop = self.titleLabel.viewBottom + 5;
+//    self.detailLabel.viewLeft = 15;
+    
+    self.lineView.size = CGSizeMake(self.bounds.size.width, 1);
+    self.lineView.viewTop = self.bounds.size.height - 1;
+
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+}
+@end

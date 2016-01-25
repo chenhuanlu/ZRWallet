@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7702" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="VIPCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="camera_button_take" translatesAutoresizingMaskIntoConstraints="NO" id="ai0-gl-3pW">
+                        <rect key="frame" x="10" y="10" width="60" height="60"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="60" id="3Z0-Y7-gFd"/>
+                            <constraint firstAttribute="height" constant="60" id="OzH-6W-Dly"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="地址" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9qP-yE-TlW">
+                        <rect key="frame" x="92" y="29" width="220" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="F2s-W0-y4y"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="经营范围" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m4f-qx-UeG">
+                        <rect key="frame" x="92" y="50" width="209" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="21" id="0uF-9S-jh8"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="商户名称" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O5B-1j-z96">
+                        <rect key="frame" x="92" y="4" width="209" height="29"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="29" id="rpy-2S-m6N"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ai0-gl-3pW" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="2" id="3oX-YF-RFp"/>
+                    <constraint firstItem="9qP-yE-TlW" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="JPW-B7-ldE"/>
+                    <constraint firstItem="O5B-1j-z96" firstAttribute="leading" secondItem="ai0-gl-3pW" secondAttribute="trailing" constant="22" id="Rld-26-EIH"/>
+                    <constraint firstItem="9qP-yE-TlW" firstAttribute="leading" secondItem="ai0-gl-3pW" secondAttribute="trailing" constant="22" id="YBI-XD-GrB"/>
+                    <constraint firstItem="m4f-qx-UeG" firstAttribute="leading" secondItem="ai0-gl-3pW" secondAttribute="trailing" constant="22" id="bVK-f9-Vqc"/>
+                    <constraint firstItem="ai0-gl-3pW" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="2" id="bor-bJ-Mm1"/>
+                    <constraint firstItem="9qP-yE-TlW" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="21" id="by2-zU-1zx"/>
+                    <constraint firstItem="O5B-1j-z96" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-4" id="ePt-cP-gmB"/>
+                    <constraint firstItem="m4f-qx-UeG" firstAttribute="top" secondItem="9qP-yE-TlW" secondAttribute="bottom" id="hUZ-hl-sga"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="O5B-1j-z96" secondAttribute="trailing" constant="11" id="v3f-5q-Cxj"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="m4f-qx-UeG" secondAttribute="trailing" constant="11" id="vj2-tR-FH0"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="bussinessLabel" destination="m4f-qx-UeG" id="ex6-rc-APM"/>
+                <outlet property="headerImage" destination="ai0-gl-3pW" id="Bdr-gA-0zu"/>
+                <outlet property="locationLabel" destination="9qP-yE-TlW" id="4vA-Sa-tU1"/>
+                <outlet property="merchantNameabel" destination="O5B-1j-z96" id="gdb-6X-xvJ"/>
+            </connections>
+            <point key="canvasLocation" x="415" y="209"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="camera_button_take" width="67" height="66"/>
+    </resources>
+</document>

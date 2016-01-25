@@ -1,0 +1,411 @@
+//
+//  MineViewController.m
+//  ZRwalletForMerchant
+//
+//  Created by 文彬 on 15/6/29.
+//  Copyright (c) 2015年 文彬. All rights reserved.
+//
+
+#import "MineViewController.h"
+#import "UIColor+NSString.h"
+#import "MyBankCardViewController.h"
+#import "MyPreferentialViewController.h"
+#import "MyManageViewController.h"
+#import "AppNavView.h"
+#import "SDKQRView.h"
+#import "UIImageView+WebCache.h"
+#import "QiniuSDK.h"
+#import "MyVIpViewController.h"
+#define COLOR_BORDER [UIColor colorWithString:@"#f0f0f0"].CGColor
+@interface MineViewController ()
+@property (nonatomic, strong) AppNavView *navView;
+
+@property (nonatomic, strong) MineView *mineView;
+@property (nonatomic, strong) UIScrollView *scrView;
+
+@property (nonatomic, strong) UIImageView *topView;
+@property (nonatomic, strong) UIImageView *photoView;
+@property (nonatomic, strong) UILabel *userPhone;
+@property (nonatomic, strong) UILabel *userName;
+
+@property (nonatomic,strong) NSData * fileData;
+@property (nonatomic,strong) UIImageView * picImagView;
+
+@property (nonatomic,strong) UIView *QRLayerView;
+@property (nonatomic, strong) UIButton *QRBtn;
+@property (nonatomic,strong) UIImage *image;
+
+@property (nonatomic, copy) NSString *headUrl;
+@property (nonatomic, strong) NSString *isHaveStr;    //是否绑定银行卡
+@property CGPoint QRPoint;                        //二维码 中心点
+
+
+@end
+
+@implementation MineViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor colorWithString:@"#f0f0f0"];
+    self.navigationController.navigationBarHidden = YES;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+     self.navigationController.interactivePopGestureRecognizer.delegate = (id)self;
+    
+    [self makeNavView];
+    [self makeView];
+    [self makeQRLayerView];
+
+    [self refreshViewWithData];
+
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    if (![self.userPhone.text isEqualToString:[UserDefaults objectForKey:PHONENUM]]) {
+        [self getUserDataRequest];
+
+    }if (![self.userName.text isEqualToString:[UserDefaults objectForKey:USER_NICKNAME]]) {
+        [self getUserDataRequest];
+    }else
+    {
+        [self refreshViewWithData];
+    }
+    
+}
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    //TODO 关闭navigationcontroller根视图的右滑返回 在根视图右滑  出现卡死现象
+    if (self.navigationController.viewControllers.count == 1)
+    {
+        return NO;
+    }
+    return YES;
+}
+
+-(void)getUserDataRequest
+{
+    [[HttpRequest sharedRequest]sendRequestWithMessage:@"" path:@"getInfo" param:nil succuss:^(id result) {
+        
+        [UserDefaults setObject:result[@"accountName"] forKey:USER_NICKNAME];
+        [UserDefaults setObject:result[@"avatarPath"] forKey:USER_PHOTO];
+        [UserDefaults setObject:result[@"bankCard"] forKey:USER_BANKCARD];
+        [UserDefaults synchronize];
+        
+        [self refreshViewWithData];
+        
+    } fail:nil];
+    
+}
+
+- (void)refreshViewWithData
+{
+    NSURL *userPhotoURL = [UserDefaults objectForKey:USER_PHOTO];
+    [self.photoView sd_setImageWithURL : userPhotoURL
+                      placeholderImage : [UIImage imageNamed:@"touxiang.png"]];
+    self.userName.text = [UserDefaults objectForKey:USER_NICKNAME];
+    self.userPhone.text = [UserDefaults objectForKey:PHONENUM];
+    
+    CGSize size = CGSizeMake(SCREEN_WIDTH - 40, SCREEN_WIDTH - 40);
+    self.image = [SDKQRView qrImageWithString : [NSString stringWithFormat:@"rilipay#%@",
+                                                 [UserDefaults objectForKey:PHONENUM]]
+                                         size : size
+                  ];
+    [self.QRBtn setBackgroundImage:self.image forState:UIControlStateNormal];
+
+}
+-(void)makeNavView
+{
+    self.navView = [AppNavView new];
+    [self.view addSubview:self.navView];
+    self.navView.titleLabel.text = @"我 的";
+}
+-(void)makeView
+{
+    self.scrView = [UIScrollView new];
+    self.scrView.delegate = self;
+    self.scrView.showsVerticalScrollIndicator = NO;
+    self.scrView.userInteractionEnabled = YES;
+    [self.view addSubview:self.scrView];
+    
+    self.topView = [UIImageView new];
+    self.topView.image = [UIImage imageNamed:@"my_backView.png"];
+    self.topView.userInteractionEnabled = YES;
+    [self.topView addLine];
+    [self.scrView addSubview:self.topView];
+    
+    CGFloat photoViewWidth = SCREEN_WIDTH/4.7;
+    CGFloat topLenght = (SCREEN_WIDTH/3.5 - photoViewWidth)/2;
+    
+    self.photoView = [[UIImageView alloc]initWithFrame:
+                      CGRectMake(topLenght, topLenght, photoViewWidth, photoViewWidth)];
+    self.photoView.layer.masksToBounds = YES;
+    self.photoView.layer.cornerRadius = photoViewWidth*0.5;
+    self.photoView.layer.borderColor = [UIColor colorWithString:@"#dad6d3"].CGColor;
+    self.photoView.layer.borderWidth = 3.0;
+    self.photoView.userInteractionEnabled = YES;
+    self.photoView.clipsToBounds = YES;
+    self.photoView.image = [UIImage imageNamed:@"touxiang"];
+    self.photoView.contentMode = UIViewContentModeScaleAspectFill;
+    [self.topView addSubview:self.photoView];
+    
+    UITapGestureRecognizer *photoTap = [[UITapGestureRecognizer alloc]initWithTarget : self
+                                                                              action : @selector(userPhotoTap)];
+    [self.photoView addGestureRecognizer:photoTap];
+
+    self.userName = [UILabel new];
+    self.userName.textColor = [UIColor whiteColor];
+    [self.topView addSubview:self.userName];
+    
+    self.userPhone = [UILabel new];
+    self.userPhone.textColor = [UIColor whiteColor];
+    [self.topView addSubview:self.userPhone];
+    
+    //mine -List
+    self.mineView = [MineView new];
+    self.mineView.delegae = self;
+    self.mineView.userInteractionEnabled = YES;
+    self.mineView.backgroundColor = [UIColor whiteColor];
+    self.mineView.layer.borderColor = COLOR_BORDER;
+    self.mineView.layer.borderWidth = 1;
+    [self.mineView makeMineView];
+    [self.mineView addLine];
+    [self.scrView addSubview:self.mineView];
+ 
+}
+#pragma mark makeQRView
+-(void)makeQRLayerView
+{
+    self.QRLayerView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    [self.QRLayerView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.4]];
+    self.QRLayerView.userInteractionEnabled = YES;
+    self.QRLayerView.alpha = 0;
+    [self.scrView addSubview:self.QRLayerView];
+    
+    UITapGestureRecognizer *QRLayerViewTap = [[UITapGestureRecognizer alloc] initWithTarget : self
+                                                                                     action : @selector(tapQR:)];
+    [self.QRLayerView addGestureRecognizer:QRLayerViewTap];
+    
+    self.QRBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.QRBtn.size = CGSizeMake(SCREEN_WIDTH/10, SCREEN_WIDTH/10);
+    self.QRBtn.viewRight = SCREEN_WIDTH - 40;
+    self.QRBtn.viewCenterY =  SCREEN_WIDTH/7;
+    
+    self.QRBtn.backgroundColor = [UIColor clearColor];
+    self.QRBtn.imageView.layer.cornerRadius = 4.0;
+    self.QRBtn.imageView.layer.masksToBounds = YES;
+    [self.QRBtn setBackgroundImage:nil forState:UIControlStateNormal];
+    
+    [self.QRBtn addTarget : self
+                   action : @selector(tapQR:)
+         forControlEvents : UIControlEventTouchUpInside];
+    
+    self.QRPoint = self.QRBtn.center;
+    [self.scrView addSubview:self.QRBtn];
+
+    [self.QRBtn setUserInteractionEnabled:YES];
+    
+}
+
+-(void)tapQR:(UITapGestureRecognizer *)tap
+{
+    [UIView animateWithDuration:0.25 animations:^{
+        
+        self.QRLayerView.alpha = self.QRLayerView.alpha==0?1:0;
+        
+    } completion:^(BOOL finished) {
+        
+    }];
+    
+    [UIView animateWithDuration:0.8 animations:^{
+        
+        if (self.QRLayerView.alpha == 1) {
+            
+            UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, self.view.viewCenterY - self.scrView.contentSize.height/2 - Dev_NavigationBar_Height - Dev_TabBar_Height , 0.0);
+            self.scrView.contentInset = contentInsets;
+            [self.scrView setScrollEnabled : NO];
+            self.QRBtn.transform = CGAffineTransformMakeScale(8, 8);
+            self.QRBtn.viewCenterY = (SCREEN_HEIGHT - Dev_NavigationBar_Height)/2;
+            self.QRBtn.viewCenterX = SCREEN_WIDTH/2;
+            
+        }else{
+            
+            UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+            self.scrView.contentInset = contentInsets;
+            [self.scrView setScrollEnabled : YES];
+            self.QRBtn.transform = CGAffineTransformMakeScale(1, 1);
+            self.QRBtn.center = self.QRPoint;
+        }
+        
+    } completion:^(BOOL finished) {
+        
+    }];
+    
+}
+-(void)userPhotoTap{
+
+    UIActionSheet *act = [[UIActionSheet alloc] initWithTitle : nil
+                                                     delegate : self
+                                            cancelButtonTitle : @"取消"
+                                       destructiveButtonTitle : nil
+                                            otherButtonTitles : @"拍照上传",@"使用相册图片",nil];
+    act.actionSheetStyle = UIActionSheetStyleBlackOpaque;
+    [act showInView:self.view];
+
+}
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    switch (buttonIndex)
+    {
+        case 0:
+        {
+#if TARGET_IPHONE_SIMULATOR
+            UIAlertView* alert = [[UIAlertView alloc] initWithTitle : @"警告"
+                                                            message : @"模拟器不可调用相机"
+                                                           delegate : nil
+                                                  cancelButtonTitle : @"确定"
+                                                  otherButtonTitles : nil];
+            [alert show];
+#elif TARGET_OS_IPHONE
+            UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+            picker.allowsEditing = YES;
+            picker.sourceType = UIImagePickerControllerSourceTypeCamera;
+            picker.delegate = self;
+            [self.view.window.rootViewController  presentViewController : picker
+                                                               animated : YES
+                                                             completion : nil];
+#endif
+        }
+            break;
+        case 1:
+        {
+            UIImagePickerController * picker = [[UIImagePickerController alloc]init];
+            picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+            picker.allowsEditing = YES;
+            picker.delegate = self;
+            [self.view.window.rootViewController  presentViewController:picker animated:YES completion:nil];
+
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+#pragma mark UIImagePickerControllerDelegate
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info{
+    
+    UIImage *imageNew = [info objectForKey:@"UIImagePickerControllerEditedImage"];
+    imageNew = [StaticTools imageWithImage:imageNew scaledToSize:CGSizeMake(SCREEN_WIDTH, SCREEN_WIDTH)];
+    NSData *dataImage = UIImageJPEGRepresentation(imageNew,0.1);
+//    UIImage *image = [[UIImage alloc] initWithData:dataImage];
+    
+    [picker dismissViewControllerAnimated:YES completion:^{
+        
+        //上传头像
+        [self userUploadHeadPhoto:dataImage];
+//        self.photoView.image = image;
+        
+    }];
+
+}
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+- (void)userUploadHeadPhoto:(NSData *)imgData
+{
+    [[HttpRequest sharedRequest]sendRequestWithMessage:@"" path:@"commons/uploadtoken" param:nil succuss:^(id result) {
+        
+        QNUploadManager *upManager = [[QNUploadManager alloc] init];
+        [upManager putData:imgData key:nil token:result[@"token"]
+                  complete: ^(QNResponseInfo *info, NSString *key, NSDictionary *resp) {
+                      
+                      NSLog(@"info:%@", info);
+                      NSLog(@"resp:%@", resp);
+                      
+                      if (resp!=nil&&info.statusCode == 200)
+                      {
+                          
+                          [[HttpRequest sharedRequest]sendRequestWithMessage:nil path:@"changeAvatar" param:@{@"newPath":[NSString stringWithFormat:@"%@/%@",result[@"location"], resp[@"key"]]} succuss:^(id result) {
+                              
+                              [self getUserDataRequest];
+                              
+                              } fail:nil];
+                      }
+                      else
+                      {
+                          //上传失败
+                          
+                      }
+              
+                  } option:nil];
+        
+        NSLog(@"%@",result);
+        
+    } fail:nil];
+}
+#pragma mark - MineViewDelegate
+-(void)MineViewListBtnClick:(NSInteger)index
+{
+    self.page = index;
+    MyBankCardViewController *myBankCardVC = [MyBankCardViewController new];
+    MyPreferentialViewController *myPreferentVC = [MyPreferentialViewController new];
+    MyManageViewController *myManageVC = [MyManageViewController new];
+    MyVIpViewController *myVipVC = [[MyVIpViewController alloc] init];
+    
+    myVipVC.hidesBottomBarWhenPushed = YES;
+    myPreferentVC.hidesBottomBarWhenPushed = YES;
+    myManageVC.hidesBottomBarWhenPushed = YES;
+    myBankCardVC.hidesBottomBarWhenPushed = YES;
+
+    switch (self.page) {
+        case PAGE_MANAGE:
+            [self.navigationController pushViewController:myManageVC animated:YES];
+            break;
+        case PAGE_PREFERENTIAL:
+            [self.navigationController pushViewController:myPreferentVC animated:YES];
+            break;
+        case PAGE_CARD:
+            if ([[UserDefaults objectForKey:USER_BANKCARD] isEqualToString:@""]) {
+                myBankCardVC.isHaveStr = @"0";
+            }else
+            {
+                myBankCardVC.isHaveStr = @"1";
+                myBankCardVC.bankCardNum = [UserDefaults objectForKey:USER_BANKCARD];
+            }
+        
+            [self.navigationController pushViewController:myBankCardVC animated:YES];
+            break;
+        case PAGE_MEMBER:
+            [self.navigationController pushViewController:myVipVC animated:YES];
+            break;
+        default:
+            break;
+    }
+    
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+}
+-(void)viewDidLayoutSubviews{
+    [super viewDidLayoutSubviews];
+    self.navView.size = CGSizeMake(SCREEN_WIDTH, Dev_NavigationBar_Height);
+
+    self.scrView.size = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT - Dev_NavigationBar_Height);
+    self.scrView.viewTop = Dev_NavigationBar_Height;
+    self.scrView.contentSize = CGSizeMake(SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    self.topView.size = CGSizeMake(SCREEN_WIDTH, SCREEN_WIDTH/3.5);
+    
+    self.userName.size = CGSizeMake(200, 20);
+    self.userName.viewLeft = self.photoView.viewRight + 10;
+    self.userName.viewTop = self.photoView.viewTop + 10;
+    
+    self.userPhone.size = self.userName.size;
+    self.userPhone.viewLeft = self.userName.viewLeft;
+    self.userPhone.viewBottom = self.photoView.viewBottom - 5;
+    ;
+    self.mineView.size = CGSizeMake(SCREEN_WIDTH, kCellHeight*4);
+    self.mineView.viewTop = self.topView.viewBottom + 10;
+    
+}
+@end

@@ -1,0 +1,25 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "f742db20-ad61-449c-93aa-07e61227bdd4++6907",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+    "f742db20-ad61-449c-93aa-07e61227bdd4++6907" : {
+
+    }
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "f742db20-ad61-449c-93aa-07e61227bdd4++6907" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "1456CF90-6744-416E-A865-D2FD7C19F14E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "f742db20-ad61-449c-93aa-07e61227bdd4++6907" : "%E4%B8%AD%E8%9E%8D%E9%92%B1%E5%8C%85%E6%9C%80%E6%96%B0"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "ZRwalletForConsumer",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ZRwalletForConsumer.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "svn:\/\/220.194.59.154",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Subversion",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "f742db20-ad61-449c-93aa-07e61227bdd4++6907"
+    }
+  ]
+}

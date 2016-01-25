@@ -1,0 +1,25 @@
+//
+//  RegisterOfPhoneInputViewController.h
+//  ZRwalletForMerchant
+//
+//  Created by 文彬 on 15/7/7.
+//  Copyright (c) 2015年 文彬. All rights reserved.
+//
+/*----------------------------------------------------------------
+ // Copyright (C) 中融钱宝
+ //
+ // 文件功能描述：注册--输入手机号页面
+ 
+ // 注意事项：
+ //
+ ----------------------------------------------------------------*/
+#import <UIKit/UIKit.h>
+
+@interface RegisterOfPhoneInputViewController : BaseViewController
+@property (weak, nonatomic) IBOutlet UIButton *AgreeBtn;
+- (IBAction)AgreeBtnClick:(id)sender;
+
+- (IBAction)buttonClickHandle:(id)sender;
+@property (weak, nonatomic) IBOutlet UIButton *nextButton;
+
+@end

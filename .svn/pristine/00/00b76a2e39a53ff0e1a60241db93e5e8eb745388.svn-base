@@ -1,0 +1,121 @@
+//
+//  RegisterOfPhoneInputViewController.m
+//  ZRwalletForMerchant
+//
+//  Created by 文彬 on 15/7/7.
+//  Copyright (c) 2015年 文彬. All rights reserved.
+//
+
+#import "RegisterOfPhoneInputViewController.h"
+#import "RegisterOfBaseInfoViewController.h"
+#import "UIColor+NSString.h"
+@interface RegisterOfPhoneInputViewController ()
+
+@property (weak, nonatomic) IBOutlet UITextField *phoneTxtField;
+
+@end
+
+@implementation RegisterOfPhoneInputViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    self.navigationItem.title = @"注册";
+    [self.AgreeBtn setImage:[UIImage imageNamed:@"agree_no.png"] forState:UIControlStateNormal];
+    [self.AgreeBtn setImage:[UIImage imageNamed:@"icon_s2.png"] forState:UIControlStateSelected];
+    self.AgreeBtn.selected = YES;
+    self.view.backgroundColor = RGBCOLOR(239, 244, 244);
+    _phoneTxtField.layer.borderColor = [UIColor colorWithString:@"f0f0f0"].CGColor;
+    _phoneTxtField.backgroundColor = [UIColor whiteColor];
+    _phoneTxtField.layer.cornerRadius = 5;
+    if (SCREEN_HEIGHT==667||SCREEN_HEIGHT==736) {
+        self.nextButton.titleLabel.font = [UIFont boldSystemFontOfSize:22];
+        
+    }
+    else
+    {
+        self.nextButton.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+    }
+    [self.nextButton makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(@(SCREEN_WIDTH/8));
+    }];
+
+}
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+     self.AgreeBtn.selected = self.AgreeBtn.selected ? NO : YES;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+#pragma mark 功能函数
+- (BOOL)checkPageInput
+{
+    if ([StaticTools isEmptyString:self.phoneTxtField.text])
+    {
+        [SVProgressHUD showErrorWithStatus:@"请输入手机号"];
+        return NO ;
+    }
+    else if(![StaticTools isMobileNumber:self.phoneTxtField.text])
+    {
+        [SVProgressHUD showErrorWithStatus:@"请输入一个正确的手机号"];
+        return NO;
+    }
+    
+    if(!self.AgreeBtn.selected)
+    {
+        [SVProgressHUD showErrorWithStatus:@"请同意中融钱包使用协议"];
+        return NO;
+    }
+    return YES;
+}
+
+#pragma mark 按钮点击
+- (IBAction)AgreeBtnClick:(id)sender {
+    //同意
+     self.AgreeBtn.selected = self.AgreeBtn.selected ? NO : YES;
+}
+
+- (IBAction)buttonClickHandle:(id)sender
+{
+    if ([self checkPageInput])
+    {
+        [self validataPhone];
+    }
+}
+
+#pragma mark HTTP
+/**
+ *  验证手机号是否注册  未注册时 后台将发送一条短信验证码
+ */
+- (void)validataPhone
+{
+    [[HttpRequest sharedRequest] sendRequestWithMessage:nil path:@"reg/validateUserPhone" param:@{@"phoneNumber":self.phoneTxtField.text}  succuss:^(id result) {
+        
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:nil message:result delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+        
+        RegisterOfBaseInfoViewController *baseInfoController = [[RegisterOfBaseInfoViewController alloc]init];
+        baseInfoController.phoneNum = self.phoneTxtField.text;
+        [self.navigationController pushViewController:baseInfoController animated:YES];
+        
+    } fail:nil];
+    
+
+}
+
+@end

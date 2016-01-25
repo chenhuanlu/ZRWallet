@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1456CF90-6744-416E-A865-D2FD7C19F14E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ZRwalletForConsumer</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>f742db20-ad61-449c-93aa-07e61227bdd4++6907</key>
+		<string>svn://220.194.59.154/iOSNEW</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ZRwalletForConsumer.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>f742db20-ad61-449c-93aa-07e61227bdd4++6907</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectRepositoryRootDictionary</key>
+	<dict>
+		<key>f742db20-ad61-449c-93aa-07e61227bdd4++6907</key>
+		<string>svn://220.194.59.154</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>svn://220.194.59.154/iOSNEW/ZRwalletForConsumer.xcodeproj</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>f742db20-ad61-449c-93aa-07e61227bdd4++6907</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>f742db20-ad61-449c-93aa-07e61227bdd4++6907</string>
+			<key>IDESourceControlWCCName</key>
+			<string>%E4%B8%AD%E8%9E%8D%E9%92%B1%E5%8C%85%E6%9C%80%E6%96%B0</string>
+		</dict>
+	</array>
+</dict>
+</plist>
